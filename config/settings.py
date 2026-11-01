@@ -1,6 +1,7 @@
 from pathlib import Path
 import os
 import logging
+import base64
 
 from dotenv import load_dotenv
 
@@ -146,9 +147,24 @@ DB_USER = os.getenv("DB_USER", "")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "")
 DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_PORT = os.getenv("DB_PORT", "3306")
-DB_SSL_CA = os.getenv("DB_SSL_CA", "").strip()
 
-if DB_SSL_CA and not Path(DB_SSL_CA).is_absolute():
+DB_SSL_CA = os.getenv("DB_SSL_CA", "").strip()
+DB_SSL_CA_B64 = os.getenv("DB_SSL_CA_B64", "").strip()
+
+if DB_SSL_CA_B64:
+    try:
+        certificate_data = base64.b64decode(
+            DB_SSL_CA_B64,
+            validate=True,
+        )
+
+        DB_SSL_CA = "/tmp/aiven-ca.pem"
+        Path(DB_SSL_CA).write_bytes(certificate_data)
+
+    except (ValueError, OSError) as error:
+        raise ValueError("No se pudo procesar el certificado CA de Aiven.") from error
+
+elif DB_SSL_CA and not Path(DB_SSL_CA).is_absolute():
     DB_SSL_CA = str(BASE_DIR / DB_SSL_CA)
 
 
@@ -164,8 +180,6 @@ DATABASE_OPTIONS = {
 }
 
 
-# En Aiven, configura el certificado CA descargado
-# desde la información de conexión del servicio.
 if DB_SSL_CA:
     if not Path(DB_SSL_CA).is_file():
         raise ValueError(f"No se encontró el certificado CA: {DB_SSL_CA}")
@@ -176,7 +190,8 @@ if DB_SSL_CA:
 
 elif IS_PRODUCTION:
     raise ValueError(
-        "En producción debes configurar DB_SSL_CA " "con el certificado CA de Aiven."
+        "En producción debes configurar DB_SSL_CA "
+        "o DB_SSL_CA_B64 con el certificado CA de Aiven."
     )
 
 
