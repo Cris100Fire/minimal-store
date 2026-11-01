@@ -80,11 +80,9 @@ Antes de instalar el proyecto, necesitas:
 ### 1. Clonar el repositorio
 
 ```bash
-git clone <URL_DEL_REPOSITORIO>
+git clone https://github.com/Cris100Fire/minimal-store
 cd mnimal-store
 ```
-
-Reemplaza `<URL_DEL_REPOSITORIO>` por la URL del repositorio cuando esté publicado.
 
 ### 2. Crear un entorno virtual
 
@@ -240,4 +238,5 @@ La publicación del repositorio y el despliegue en un entorno de producción se 
 
 ## Autor
 
-Desarrollado como proyecto de formación en desarrollo Full Stack.
+**Cristopher Cienfuegos**
+Proyecto de portafolio desarrollado para demostrar conocimientos de desarrollo backend con Python, Django, bases de datos relacionales, control de acceso y arquitectura modular de aplicaciones web.
