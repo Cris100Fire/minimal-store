@@ -1,0 +1,188 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}
+    {% if selected_category %}
+        {{ selected_category.name }} | MinimalStore
+    {% else %}
+        Catálogo | MinimalStore
+    {% endif %}
+{% endblock %}
+
+{% block meta_description %}
+Explora el catálogo de MinimalStore y descubre productos de distintas categorías.
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/catalog.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="container catalog-page">
+
+    <header class="catalog-header">
+        <p class="catalog-eyebrow">MINIMALSTORE · COLECCIÓN</p>
+
+        <h1>
+            {% if selected_category %}
+                {{ selected_category.name }}
+            {% else %}
+                Todos los productos
+            {% endif %}
+        </h1>
+
+        <p class="catalog-description">
+            Explora nuestra selección y encuentra lo que necesitas.
+        </p>
+    </header>
+
+    <nav class="category-nav" aria-label="Filtrar por categoría">
+        <a
+            class="category-link{% if not selected_category %} category-link-active{% endif %}"
+            href="{% url 'catalog:product_list' %}"
+            {% if not selected_category %}aria-current="page"{% endif %}
+        >
+            Todas las categorías
+        </a>
+
+        {% for category in categories %}
+            <a
+                class="category-link{% if selected_category and selected_category.slug == category.slug %} category-link-active{% endif %}"
+                href="{% url 'catalog:category_products' category.slug %}"
+                {% if selected_category and selected_category.slug == category.slug %}aria-current="page"{% endif %}
+            >
+                {{ category.name }}
+            </a>
+        {% endfor %}
+    </nav>
+
+    {% if products %}
+        <div class="catalog-results">
+
+            <p class="catalog-results-count">
+                {% if selected_category %}
+                    Productos de esta categoría
+                {% else %}
+                    Productos disponibles en el catálogo
+                {% endif %}
+            </p>
+
+            <div class="product-grid">
+                {% for product in products %}
+                    <article class="product-card">
+
+                        <a
+                            class="product-image-link"
+                            href="{% url 'catalog:product_detail' product.slug %}"
+                            aria-label="Ver {{ product.name }}"
+                        >
+                            {% if product.image_url %}
+                                <img
+                                    class="product-image"
+                                    src="{{ product.image_url }}"
+                                    alt="{{ product.name }}"
+                                    loading="lazy"
+                                >
+                            {% else %}
+                                <div
+                                    class="product-image-placeholder"
+                                    aria-label="Imagen no disponible"
+                                >
+                                    Imagen no disponible
+                                </div>
+                            {% endif %}
+                        </a>
+
+                        <div class="product-card-body">
+
+                            <p class="product-category">
+                                {{ product.category.name }}
+                            </p>
+
+                            <h2 class="product-name">
+                                <a href="{% url 'catalog:product_detail' product.slug %}">
+                                    {{ product.name }}
+                                </a>
+                            </h2>
+
+                            <p class="product-price">
+                                S/ {{ product.price|floatformat:2 }}
+                            </p>
+
+                            {% if product.stock > 0 %}
+                                <p class="product-stock product-stock-available">
+                                    <span class="stock-indicator" aria-hidden="true"></span>
+                                    Disponible
+                                </p>
+                            {% else %}
+                                <p class="product-stock product-stock-unavailable">
+                                    <span class="stock-indicator" aria-hidden="true"></span>
+                                    Agotado
+                                </p>
+                            {% endif %}
+
+                            <a
+                                class="product-card-link"
+                                href="{% url 'catalog:product_detail' product.slug %}"
+                            >
+                                Ver producto
+                                <span aria-hidden="true">→</span>
+                            </a>
+
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% if is_paginated %}
+            <nav class="pagination" aria-label="Paginación del catálogo">
+
+                {% if page_obj.has_previous %}
+                    <a
+                        class="pagination-link"
+                        href="?page={{ page_obj.previous_page_number }}"
+                        rel="prev"
+                    >
+                        ← Anterior
+                    </a>
+                {% endif %}
+
+                <span class="pagination-current" aria-current="page">
+                    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a
+                        class="pagination-link"
+                        href="?page={{ page_obj.next_page_number }}"
+                        rel="next"
+                    >
+                        Siguiente →
+                    </a>
+                {% endif %}
+
+            </nav>
+        {% endif %}
+
+    {% else %}
+        <div class="catalog-empty">
+            <h2>No encontramos productos</h2>
+
+            <p>
+                No hay productos disponibles en esta sección por el momento.
+            </p>
+
+            {% if selected_category %}
+                <a
+                    class="catalog-empty-link"
+                    href="{% url 'catalog:product_list' %}"
+                >
+                    Ver todos los productos
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+
+</section>
+{% endblock %}

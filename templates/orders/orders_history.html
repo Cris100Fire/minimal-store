@@ -1,0 +1,124 @@
+
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Mis pedidos | MinimalStore{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/orders.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container orders-page history-page">
+    <header class="orders-header">
+        <p class="orders-eyebrow">Tu cuenta</p>
+        <h1>Mis pedidos</h1>
+        <p class="orders-description">
+            Consulta tu historial de compras y el estado de tus pedidos.
+        </p>
+    </header>
+
+    {% if orders %}
+        <section
+            class="orders-history-list"
+            aria-label="Historial de pedidos"
+        >
+            {% for order in orders %}
+                <article class="history-order">
+                    <div class="history-order-main">
+                        <div class="history-order-heading">
+                            <h2>Pedido #{{ order.pk }}</h2>
+
+                            <span class="order-status">
+                                {{ order.get_status_display }}
+                            </span>
+                        </div>
+
+                        <p class="history-order-date">
+                            {{ order.created_at|date:"d/m/Y H:i" }}
+                        </p>
+                    </div>
+
+                    <div class="history-order-details">
+                        <div class="history-order-total">
+                            <span>Total</span>
+                            <strong>
+                                S/ {{ order.total|floatformat:2 }}
+                            </strong>
+                        </div>
+
+                        <a
+                            class="history-order-link"
+                            href="{% url 'orders:confirmation' order.pk %}"
+                        >
+                            Ver pedido
+                            <span aria-hidden="true">→</span>
+                        </a>
+                    </div>
+                </article>
+            {% endfor %}
+        </section>
+
+        {% if is_paginated %}
+            <nav
+                class="orders-pagination"
+                aria-label="Paginación de pedidos"
+            >
+                {% if page_obj.has_previous %}
+                    <a
+                        class="orders-page-link"
+                        href="?page={{ page_obj.previous_page_number }}"
+                    >
+                        <span aria-hidden="true">←</span>
+                        Anterior
+                    </a>
+                {% else %}
+                    <span
+                        class="orders-page-link orders-page-link-disabled"
+                        aria-disabled="true"
+                    >
+                        <span aria-hidden="true">←</span>
+                        Anterior
+                    </span>
+                {% endif %}
+
+                <span class="orders-page-indicator">
+                    Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                </span>
+
+                {% if page_obj.has_next %}
+                    <a
+                        class="orders-page-link"
+                        href="?page={{ page_obj.next_page_number }}"
+                    >
+                        Siguiente
+                        <span aria-hidden="true">→</span>
+                    </a>
+                {% else %}
+                    <span
+                        class="orders-page-link orders-page-link-disabled"
+                        aria-disabled="true"
+                    >
+                        Siguiente
+                        <span aria-hidden="true">→</span>
+                    </span>
+                {% endif %}
+            </nav>
+        {% endif %}
+    {% else %}
+        <section class="orders-empty-state">
+            <h2>Aún no tienes pedidos</h2>
+            <p>
+                Cuando realices una compra, podrás consultar aquí sus detalles.
+            </p>
+
+            <a
+                class="orders-primary-button orders-button-link"
+                href="{% url 'catalog:product_list' %}"
+            >
+                Explorar productos
+            </a>
+        </section>
+    {% endif %}
+</div>
+{% endblock %}

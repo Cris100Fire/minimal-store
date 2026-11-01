@@ -1,0 +1,41 @@
+
+<nav class="main-menu" aria-label="Navegación principal">
+    <div class="container menu-content">
+        <div class="menu-links">
+            <a
+                href="{% url 'core:home' %}"
+                {% if request.resolver_match.namespace == 'core' %}aria-current="page"{% endif %}
+            >
+                Inicio
+            </a>
+
+            <a
+                href="{% url 'catalog:product_list' %}"
+                {% if request.resolver_match.url_name == 'product_list' or request.resolver_match.url_name == 'category_products' %}aria-current="page"{% endif %}
+            >
+                Colección
+            </a>
+
+            <a href="{% url 'core:home' %}#products">
+                Destacados
+            </a>
+        </div>
+
+        <div class="menu-actions">
+            {% if user.is_authenticated %}
+                <a
+                    class="menu-orders-link"
+                    href="{% url 'orders:my_orders' %}"
+                    {% if request.resolver_match.url_name == 'my_orders' %}aria-current="page"{% endif %}
+                >
+                    Mis pedidos
+                </a>
+            {% endif %}
+
+            <a class="cart-link" href="{% url 'cart:detail' %}">
+                <span>Mi carrito</span>
+                <span class="cart-icon" aria-hidden="true">↗</span>
+            </a>
+        </div>
+    </div>
+</nav>

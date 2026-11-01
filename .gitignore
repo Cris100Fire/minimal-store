@@ -1,0 +1,27 @@
+# Variables de entorno y secretos
+.env
+.env.*
+!.env.example
+certs*
+
+# Entornos virtuales
+.venv/
+venv/
+
+# Archivos Python
+__pycache__/
+*.py[cod]
+
+# Archivos locales y de desarrollo
+db.sqlite3
+.coverage
+htmlcov/
+
+# Archivos del editor y del sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Archivos estáticos generados para producción
+staticfiles/

@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Crear cuenta | MinimalStore{% endblock %}
+
+{% block meta_description %}
+Crea tu cuenta de MinimalStore para comenzar a comprar.
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="container account-page">
+    <div class="account-card account-card-register">
+        <header class="account-header">
+            <p class="eyebrow">ÚNETE A MINIMALSTORE</p>
+            <h1>Crear una cuenta</h1>
+            <p>Regístrate para comenzar a comprar.</p>
+        </header>
+
+        <form class="account-form" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <button class="account-submit" type="submit">
+                Registrarme
+            </button>
+        </form>
+
+        <p class="account-switch">
+            ¿Ya tienes una cuenta?
+            <a href="{% url 'accounts:login' %}">
+                Inicia sesión
+            </a>
+        </p>
+    </div>
+</section>
+{% endblock %}

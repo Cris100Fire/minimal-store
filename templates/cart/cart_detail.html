@@ -1,0 +1,143 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Mi carrito | MinimalStore{% endblock %}
+
+{% block meta_description %}
+Revisa los productos de tu carrito de compras.
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/cart.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="container cart-page">
+    <header class="page-heading">
+        <p class="eyebrow">TU COMPRA</p>
+        <h1>Mi carrito</h1>
+        <p class="page-description">
+            Revisa tus productos antes de continuar.
+        </p>
+    </header>
+
+    {% if items %}
+        <div class="cart-layout">
+            <div class="cart-items" aria-label="Productos de tu carrito">
+                {% for item in items %}
+                    <article class="cart-item">
+                        <a
+                            class="cart-item-image"
+                            href="{% url 'catalog:product_detail' item.product.slug %}"
+                            aria-label="Ver {{ item.product.name }}"
+                        >
+                            {% if item.product.image_url %}
+                                <img
+                                    src="{{ item.product.image_url }}"
+                                    alt="{{ item.product.name }}"
+                                    loading="lazy"
+                                >
+                            {% else %}
+                                <span class="image-placeholder">
+                                    Sin imagen
+                                </span>
+                            {% endif %}
+                        </a>
+
+                        <div class="cart-item-info">
+                            <p class="cart-item-category">
+                                {{ item.product.category.name }}
+                            </p>
+
+                            <h2 class="cart-item-name">
+                                <a href="{% url 'catalog:product_detail' item.product.slug %}">
+                                    {{ item.product.name }}
+                                </a>
+                            </h2>
+
+                            <p class="cart-item-price">
+                                S/ {{ item.unit_price|floatformat:2 }}
+                                <span>por unidad</span>
+                            </p>
+
+                            <p class="cart-item-quantity">
+                                Cantidad: {{ item.quantity }}
+                            </p>
+                        </div>
+
+                        <div class="cart-item-actions">
+                            <p class="cart-item-subtotal">
+                                S/ {{ item.subtotal|floatformat:2 }}
+                            </p>
+
+                            <form
+                                method="post"
+                                action="{% url 'cart:remove' item.product.pk %}"
+                            >
+                                {% csrf_token %}
+
+                                <button
+                                    type="submit"
+                                    class="remove-button"
+                                    aria-label="Eliminar {{ item.product.name }} del carrito"
+                                >
+                                    Eliminar
+                                </button>
+                            </form>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+
+            <aside class="cart-summary" aria-labelledby="cart-summary-heading">
+                <h2 id="cart-summary-heading">Resumen del pedido</h2>
+
+                <div class="summary-row">
+                    <span>Productos</span>
+                    <span>{{ cart|length }}</span>
+                </div>
+
+                <div class="summary-row summary-total">
+                    <span>Total</span>
+                    <span>S/ {{ total|floatformat:2 }}</span>
+                </div>
+
+                <p class="summary-note">
+                    El importe se muestra en soles peruanos.
+                </p>
+
+                <a class="checkout-button" href="{% url 'orders:checkout' %}">
+                    Continuar con la compra
+                    <span aria-hidden="true">→</span>
+                </a>
+
+                <a
+                    class="continue-shopping"
+                    href="{% url 'catalog:product_list' %}"
+                >
+                    <span aria-hidden="true">←</span>
+                    Seguir comprando
+                </a>
+            </aside>
+        </div>
+    {% else %}
+        <div class="empty-cart">
+            <div class="empty-cart-icon" aria-hidden="true">🛒</div>
+
+            <h2>Tu carrito está vacío</h2>
+
+            <p>
+                Todavía no has añadido productos. Explora el catálogo
+                y encuentra algo que te interese.
+            </p>
+
+            <a
+                class="button button-primary"
+                href="{% url 'catalog:product_list' %}"
+            >
+                Explorar productos
+            </a>
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

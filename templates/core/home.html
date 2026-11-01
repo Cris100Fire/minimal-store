@@ -1,0 +1,146 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Inicio | MinimalStore{% endblock %}
+
+{% block meta_description %}
+Explora nuestro catálogo de productos en MinimalStore.
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/core.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="home-page container">
+    <header class="home-header">
+        <p class="home-eyebrow">MINIMALSTORE · TIENDA ONLINE</p>
+
+        <h1>Encuentra lo que necesitas.</h1>
+
+        <p class="home-description">
+            Una selección de productos para tu día a día,
+            con una experiencia de compra sencilla.
+        </p>
+
+        <a class="home-catalog-link" href="{% url 'catalog:product_list' %}">
+            Explorar catálogo
+            <span aria-hidden="true">→</span>
+        </a>
+    </header>
+
+    <section
+        id="products"
+        class="home-products"
+        aria-labelledby="products-heading"
+    >
+        <div class="home-section-header">
+            <div>
+                <p class="home-eyebrow">NUESTRA SELECCIÓN</p>
+                <h2 id="products-heading">Productos destacados</h2>
+            </div>
+
+            <a
+                class="home-view-all"
+                href="{% url 'catalog:product_list' %}"
+            >
+                Ver catálogo
+                <span aria-hidden="true">→</span>
+            </a>
+        </div>
+
+        {% if products %}
+            <div class="product-grid home-product-grid">
+                {% for product in products %}
+                    <article class="product-card home-product-card">
+                        <a
+                            class="home-product-image-link"
+                            href="{% url 'catalog:product_detail' product.slug %}"
+                            aria-label="Ver {{ product.name }}"
+                        >
+                            {% if product.image_url %}
+                                <img
+                                    class="home-product-image"
+                                    src="{{ product.image_url }}"
+                                    alt="{{ product.name }}"
+                                    loading="lazy"
+                                >
+                            {% else %}
+                                <div
+                                    class="home-product-placeholder"
+                                    aria-hidden="true"
+                                >
+                                    Sin imagen
+                                </div>
+                            {% endif %}
+                        </a>
+
+                        <div class="home-product-body">
+                            <p class="home-product-category">
+                                {{ product.category.name }}
+                            </p>
+
+                            <h3 class="home-product-name">
+                                <a
+                                    href="{% url 'catalog:product_detail' product.slug %}"
+                                >
+                                    {{ product.name }}
+                                </a>
+                            </h3>
+
+                            <p class="home-product-description">
+                                {{ product.description|default:"Descubre este producto." }}
+                            </p>
+
+                            <p class="home-product-price">
+                                S/ {{ product.price|floatformat:2 }}
+                            </p>
+
+                            {% if product.stock > 0 %}
+                                <form
+                                    class="home-add-form"
+                                    method="post"
+                                    action="{% url 'cart:add' product.pk %}"
+                                >
+                                    {% csrf_token %}
+
+                                    <div class="home-quantity-field">
+                                        <label for="quantity-{{ product.pk }}">
+                                            Cantidad
+                                        </label>
+
+                                        <input
+                                            id="quantity-{{ product.pk }}"
+                                            type="number"
+                                            name="quantity"
+                                            value="1"
+                                            min="1"
+                                            max="{{ product.stock }}"
+                                            required
+                                        >
+                                    </div>
+
+                                    <button
+                                        class="home-add-button"
+                                        type="submit"
+                                    >
+                                        Añadir al carrito
+                                    </button>
+                                </form>
+                            {% else %}
+                                <p class="home-stock-unavailable">
+                                    Agotado
+                                </p>
+                            {% endif %}
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="home-empty-message">
+                No hay productos disponibles en este momento.
+            </p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

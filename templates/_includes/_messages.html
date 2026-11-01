@@ -1,0 +1,19 @@
+
+{% if messages %}
+    <div
+        class="container messages-container"
+        aria-label="Notificaciones"
+        aria-live="polite"
+        aria-relevant="additions text"
+    >
+        {% for message in messages %}
+            <div
+                class="message{% if message.tags %} {{ message.tags }}{% endif %}"
+                role="status"
+            >
+                <span class="message-indicator" aria-hidden="true"></span>
+                <span class="message-text">{{ message }}</span>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}

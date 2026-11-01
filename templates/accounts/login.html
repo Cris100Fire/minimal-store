@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Iniciar sesión | MinimalStore{% endblock %}
+
+{% block meta_description %}
+Inicia sesión en tu cuenta de MinimalStore.
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/accounts.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="container account-page">
+    <div class="account-card">
+        <header class="account-header">
+            <p class="eyebrow">BIENVENIDO DE NUEVO</p>
+            <h1>Iniciar sesión</h1>
+            <p>Accede a tu cuenta de MinimalStore.</p>
+        </header>
+
+        <form class="account-form" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            {% if next %}
+                <input type="hidden" name="next" value="{{ next }}">
+            {% endif %}
+
+            <button class="account-submit" type="submit">
+                Iniciar sesión
+            </button>
+        </form>
+
+        <p class="account-switch">
+            ¿Todavía no tienes cuenta?
+            <a href="{% url 'accounts:register' %}">
+                Regístrate
+            </a>
+        </p>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,104 @@
+
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Finalizar compra | MinimalStore{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/orders.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container orders-page checkout-page">
+    <header class="orders-header">
+        <p class="orders-eyebrow">Finalizar compra</p>
+        <h1>Revisar pedido</h1>
+        <p class="orders-description">
+            Revisa los productos y confirma tu compra.
+            No se efectuará ningún cobro real.
+        </p>
+    </header>
+
+    {% if items %}
+        <div class="checkout-layout">
+            <section
+                class="checkout-items"
+                aria-labelledby="checkout-items-title"
+            >
+                <h2 id="checkout-items-title" class="orders-section-title">
+                    Resumen de productos
+                </h2>
+
+                <div class="checkout-item-list">
+                    {% for item in items %}
+                        <article class="checkout-item">
+                            <div class="checkout-item-info">
+                                <h3>{{ item.product.name }}</h3>
+                                <p class="checkout-item-quantity">
+                                    Cantidad: {{ item.quantity }}
+                                </p>
+                            </div>
+
+                            <div class="checkout-item-pricing">
+                                <p class="checkout-unit-price">
+                                    S/ {{ item.unit_price|floatformat:2 }} c/u
+                                </p>
+                                <p class="checkout-item-subtotal">
+                                    S/ {{ item.subtotal|floatformat:2 }}
+                                </p>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+
+                <a class="orders-text-link" href="{% url 'cart:detail' %}">
+                    <span aria-hidden="true">←</span>
+                    Volver al carrito
+                </a>
+            </section>
+
+            <aside
+                class="checkout-summary"
+                aria-labelledby="checkout-summary-title"
+            >
+                <h2 id="checkout-summary-title">Total del pedido</h2>
+
+                <div class="checkout-total">
+                    <span>Total</span>
+                    <strong>S/ {{ total|floatformat:2 }}</strong>
+                </div>
+
+                <p class="checkout-disclaimer">
+                    Esta es una compra simulada. No se realizará ningún cobro.
+                </p>
+
+                <form class="checkout-confirm-form" method="post">
+                    {% csrf_token %}
+
+                    <button class="orders-primary-button" type="submit">
+                        Confirmar pedido
+                    </button>
+                </form>
+
+                <p class="checkout-secure-note">
+                    Revisa los productos antes de confirmar.
+                </p>
+            </aside>
+        </div>
+    {% else %}
+        <section class="orders-empty-state">
+            <h2>Tu carrito está vacío</h2>
+            <p>
+                Añade algún producto antes de continuar con tu compra.
+            </p>
+
+            <a
+                class="orders-primary-button orders-button-link"
+                href="{% url 'catalog:product_list' %}"
+            >
+                Explorar productos
+            </a>
+        </section>
+    {% endif %}
+</div>
+{% endblock %}

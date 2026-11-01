@@ -1,0 +1,90 @@
+
+<footer class="site-footer">
+    <div class="container footer-content">
+        <section class="footer-brand-group" aria-labelledby="footer-brand-title">
+            <a
+                class="footer-brand"
+                href="{% url 'core:home' %}"
+                id="footer-brand-title"
+            >
+                MinimalStore<span class="footer-brand-period">.</span>
+            </a>
+
+            <p class="footer-description">
+                Una selección de productos para una vida más sencilla.
+                Diseño funcional, detalles cuidados y una experiencia
+                de compra clara.
+            </p>
+
+            <p class="footer-note">
+                Diseño esencial para el día a día.
+            </p>
+        </section>
+
+        <nav class="footer-column" aria-label="Explorar">
+            <h2 class="footer-heading">Explorar</h2>
+
+            <ul class="footer-links">
+                <li>
+                    <a href="{% url 'core:home' %}">Inicio</a>
+                </li>
+                <li>
+                    <a href="{% url 'catalog:product_list' %}">
+                        Colección completa
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'cart:detail' %}">Mi carrito</a>
+                </li>
+            </ul>
+        </nav>
+
+        <nav class="footer-column" aria-label="Tu cuenta">
+            <h2 class="footer-heading">Tu cuenta</h2>
+
+            <ul class="footer-links">
+                {% if user.is_authenticated %}
+                    <li>
+                        <a href="{% url 'orders:my_orders' %}">
+                            Mis pedidos
+                        </a>
+                    </li>
+                    <li>
+                        <form
+                            class="footer-logout-form"
+                            method="post"
+                            action="{% url 'accounts:logout' %}"
+                        >
+                            {% csrf_token %}
+                            <button class="footer-logout-button" type="submit">
+                                Cerrar sesión
+                            </button>
+                        </form>
+                    </li>
+                {% else %}
+                    <li>
+                        <a href="{% url 'accounts:login' %}">
+                            Iniciar sesión
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'accounts:register' %}">
+                            Crear cuenta
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+
+    <div class="container footer-bottom">
+        <p>
+            &copy; {% now "Y" %} MinimalStore.
+            Proyecto con datos de demostración.
+        </p>
+
+        <a class="footer-back-to-top" href="#main-content">
+            Volver arriba <span aria-hidden="true">↑</span>
+        </a>
+    </div>
+</footer>
